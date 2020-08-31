@@ -45,5 +45,17 @@ services:
       - INFLUXDB_READ_USER=<read>
       - INFLUXDB_READ_USER_PASSWORD=<pw3>
     restart: unless-stopped
+  electric-meter-query:
+    image: electric-meter
+    container_name: electric-meter-query
+    environment:
+      - influx_ip=192.168.1.3
+      - influx_port=8086
+      - influx_user=<user>
+      - influx_pw=<pw2>
+      - influx_db=<db>
+    devices:
+      - /dev/ttyUSB0
+    restart: unless-stopped
 ```
 Please adapt the parameters in <> brackets, use external folder to save the database and use matching values in the python script configuration!
