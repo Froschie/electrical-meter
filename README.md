@@ -21,7 +21,7 @@ curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/get_e
 docker build --tag electrical-meter .
 ```
 
-### Run Script manually (no writing to InfluxDB)
+## Run Script manually (no writing to InfluxDB)
 
 ```bash
 docker exec -it --rm -e influx_ip=192.168.1.3 -e influx_port=8086 -e influx_user=user -e influx_pw=pw --device=/dev/ttyUSB0 electrical-meter
@@ -41,12 +41,12 @@ script manually exited!
 Negative Values mean generated power from photovoltaik is suplied to the grid. Positive values mean power is taken from grid.
 
 
-### Start a Docker Container via CMD Line
+## Start a Docker Container via CMD Line
 ```
 docker run -d --name electrical-meter --restart unless-stopped -e influx_ip=192.168.1.3 -e influx_port=8086 -e influx_user=user -e influx_pw=pw -e interval=300 --device=/dev/ttyUSB0 electrical-meter
 ```
 
-## Docker Compose
+## Start a Docker Container via Docker-Compose File
 ```yaml
 version: '3'
 
