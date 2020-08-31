@@ -13,11 +13,11 @@ USB IR Reader <50€
 ## Create a Docker Container
 
 ```bash
-mkdir xxx
-cd xxx/
+mkdir electric-meter
+cd electric-meter/
 curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/Dockerfile
-curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/xxx.sh
-curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/xxx.py
+curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/get_electric_meter.py
+curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/get_electric_meter_start.py
 docker build --tag electrical-meter .
 ```
 
@@ -33,6 +33,9 @@ docker build --tag electrical-meter .
 script manually exited!
 ```
 
+```
+docker run -d --name electrical-meter --restart unless-stopped -e influx_ip=192.168.1.3 -e influx_port=8086 -e influx_user=user -e influx_pw=pw -e interval=300 --device=/dev/ttyUSB0 electrical-meter
+```
 
 ## Docker Compose
 ```yaml
@@ -66,6 +69,7 @@ services:
       - influx_user=<user>
       - influx_pw=<pw2>
       - influx_db=<db>
+      - interval=300
     devices:
       - /dev/ttyUSB0
     restart: unless-stopped
