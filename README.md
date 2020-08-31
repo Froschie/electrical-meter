@@ -22,6 +22,18 @@ docker build --tag electrical-meter .
 ```
 
 
+```bash
+/get_electric_meter.py --influx_ip=$influx_ip --influx_port=$influx_port --influx_user=$influx_user --influx_pw=$influx_pw --influx_db=$influx_db --device=$device --write=0
+/dev/ttyUSB0 opened
+
+2020-08-31 15:32:39.667895 Consumption:  100000.1 Wh,  Supply:  100000.7 Wh,  Actual Power:  -800 W
+2020-08-31 15:32:40.662338 Consumption:  100000.1 Wh,  Supply:  100000.9 Wh,  Actual Power:  -800 W
+2020-08-31 15:32:41.666824 Consumption:  100000.2 Wh,  Supply:  100000.9 Wh,  Actual Power:  125 W
+^C
+script manually exited!
+```
+
+
 ## Docker Compose
 ```yaml
 version: '3'
