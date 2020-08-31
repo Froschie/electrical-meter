@@ -42,7 +42,7 @@ Negative Values mean generated power from photovoltaik is suplied to the grid. P
 
 
 ## Start a Docker Container via CMD Line
-```
+```bash
 docker run -d --name electrical-meter --restart unless-stopped -e influx_ip=192.168.1.3 -e influx_port=8086 -e influx_user=user -e influx_pw=pw -e interval=300 --device=/dev/ttyUSB0 electrical-meter
 ```
 
