@@ -5,7 +5,7 @@ Electric meters offer e.g. total power consumption counter via SML (Smart Messag
 
 Based on the work and Python script [SML-Interface script](http://www.stefan-weigert.de/php_loader/sml.php) attached script will read the messages in configureable intervals (default 300s) and save the counter values to InfluxDB.
 
-The script was tested on a ISKRA MT631 with extended informations enabled (PIN from power operator necessary).
+The script was tested on a ISKRA MT631 electric meter with extended informations enabled (PIN from power operator necessary).
 Without extended informations enabled current power consumption is not transmitted and counters only provide Wh values with last 3x digits set to 0 (virtually reporting kWh only).
 
 
