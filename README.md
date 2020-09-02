@@ -50,40 +50,9 @@ docker run -d --name electrical-meter --restart unless-stopped -e influx_ip=192.
 ```
 
 ## Start a Docker Container via Docker-Compose File
-```yaml
-version: '3'
-
-services:
-  <influxdb-service-name>:
-    image: influxdb:latest
-    container_name: <influxdb_container_name>
-    ports:
-      - 8086:8086
-    volumes:
-      - </some_folder>:/var/lib/influxdb
-    environment:
-      - INFLUXDB_HTTP_AUTH_ENABLED=true
-      - INFLUXDB_MONITOR_STORE_ENABLED=false
-      - INFLUXDB_DB=<db>
-      - INFLUXDB_ADMIN_USER=<admin>
-      - INFLUXDB_ADMIN_PASSWORD=<pw1>
-      - INFLUXDB_USER=<user>
-      - INFLUXDB_USER_PASSWORD=<pw2>
-      - INFLUXDB_READ_USER=<read>
-      - INFLUXDB_READ_USER_PASSWORD=<pw3>
-    restart: unless-stopped
-  electric-meter-query:
-    image: electric-meter
-    container_name: electric-meter-query
-    environment:
-      - influx_ip=192.168.1.3
-      - influx_port=8086
-      - influx_user=<user>
-      - influx_pw=<pw2>
-      - influx_db=<db>
-      - interval=300
-    devices:
-      - /dev/ttyUSB0
-    restart: unless-stopped
+```bash
+curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/docker-compose.yaml
+vi docker-compose.yaml
+docker-compose up -d
 ```
-Please adapt the parameters in <> brackets, use external folder to save the database and use matching values in the python script configuration!
+*Note: please adapt the parameters in docker compose file as needed! Use external folder to save the database and use matching values in the python script configuration!*
