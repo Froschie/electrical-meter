@@ -100,9 +100,9 @@ def watchdogtimer_ovf():
     if crc_rx == crc_calc:
         if message[0:8] == b'\x1b\x1b\x1b\x1b\x01\x01\x01\x01':
             message = mystring.hex()
-            counter_consumption = "---"
-            counter_supply = "---"
-            counter_actpower = "---"
+            counter_consumption = 0
+            counter_supply = 0
+            counter_actpower = 0
             if message.find(str_consumption):
                 start_consumption = message.find(str_consumption)+(len(str_consumption))
                 end_consumption = message[start_consumption:].find("0177")
@@ -123,24 +123,29 @@ def watchdogtimer_ovf():
                 counter_actpower = twos_comp(int(value_actpower[value_actpower.find("621b5200")+(len("621b5200")+2):value_actpower.find("621b5200")+(len("621b5200")+2)+lengh_actpower_str*2], 16), lengh_actpower_str*8)
             print(datetime.now(), "Consumption: ", counter_consumption, "Wh, ", "Supply: ", counter_supply, "Wh, ", "Actual Power: ", counter_actpower, "W")
             if counter_consumption != "---" and counter_supply != "---" and args.write == 1:
-                client = InfluxDBClient(host=args.influx_ip, port=args.influx_port, username=args.influx_user, password=args.influx_pw)
-                client.switch_database(args.influx_db)
-                json_body = [{
+                measurement_list = {'consumption': counter_consumption, 'supply': counter_supply}
+                temp_body = {
                     "measurement": "electric_meter",
                     "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
-                    "fields": {
-                        "consumption": int(counter_consumption),
-                        'supply': int(counter_supply)
-                    }
-                }]
-                #print(datetime.now(), "InfluxDB write data DEBUG:" + str(json_body))
-                influx_result = client.write_points(json_body)
-                if influx_result:
-                    print(datetime.now(), "InfluxDB write data successfull:" + str(json_body))
+                    "fields": {}
+                }
+                for measurement in measurement_list:
+                    if measurement_list[measurement] > 0:
+                        temp_body['fields'][measurement] = int(measurement_list[measurement])
+                if len(temp_body['fields']) > 0:
+                    json_body = [temp_body]
+                    #print(datetime.now(), "InfluxDB write data DEBUG:" + str(json_body))
+                    client = InfluxDBClient(host=args.influx_ip, port=args.influx_port, username=args.influx_user, password=args.influx_pw)
+                    client.switch_database(args.influx_db)
+                    influx_result = client.write_points(json_body)
+                    if influx_result:
+                        print(datetime.now(), "InfluxDB write data successfull:" + str(json_body))
+                    else:
+                        print(datetime.now(), "InfluxDB write data FAILED:" + str(json_body))
+                        print(influx_result)
+                    client.close()
                 else:
-                    print(datetime.now(), "InfluxDB write data FAILED:" + str(json_body))
-                    print(influx_result)
-                client.close()
+                    print(datetime.now(), "InfluxDB write skipped, no valid data found:", measurement_list)
                 os._exit(0)
             watchdog.stop()
             mystring=b""
