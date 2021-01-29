@@ -1,5 +1,6 @@
-# electrical-meter
-Script to read SML messages from electrical meter and save it to InfluxDB.
+# electrical-meter ![Docker Hub image](https://github.com/Froschie/electrical-meter/workflows/Docker%20Hub%20image/badge.svg)
+
+Script to read SML messages from electrical meter and save it to InfluxDB.  
 
 Electric meters offer e.g. total power consumption counter via SML (Smart Message Language) IR interface. See [SML](https://de.wikipedia.org/wiki/Smart_Message_Language) and [OBIS Numbers](https://de.wikipedia.org/wiki/OBIS-Kennzahlen) Wikipedia articles. The messages can be captured by an simply IR reader with USB connection (search for "smartmeter Optokopf").
 
@@ -11,6 +12,33 @@ Without extended informations enabled current power consumption is not transmitt
 
 ## Part List
 USB IR Reader <50€
+
+
+## Start Docker Container  
+
+Pull latest Image:  
+`docker pull froschie/sml-electrical-meter:latest`  
+
+Start Container to only query values:  
+```
+docker run -it --rm \
+ --device /dev/ttyUSB0 \
+ -e TZ=Europe/Berlin \
+ -e device="/dev/ttyUSB0" \
+ -e write="0" \
+ -e interval=1 \
+ froschie/sml-electrical-meter
+```
+*Note: please adapt the parameters as needed!*  
+
+
+## Start Docker Container via Docker-Compose  
+```bash
+curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/docker-compose.yaml
+vi docker-compose.yaml
+docker-compose up -d
+```
+*Note: please adapt the parameters as needed!*
 
 
 ## Create a Docker Container
