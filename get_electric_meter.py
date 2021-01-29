@@ -6,7 +6,7 @@ import serial
 from threading import Timer
 import sys
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from influxdb import InfluxDBClient
 import argparse
 
@@ -19,7 +19,21 @@ parser.add_argument('--influx_user', type=str, required=True, default="", help='
 parser.add_argument('--influx_pw', type=str, required=True, default="", help='Password of the Influx DB Server.')
 parser.add_argument('--influx_db', type=str, required=True, default="", help='DB name of the Influx DB Server.')
 parser.add_argument('--write', type=int, required=False, default=1, choices=[0, 1], help='Specify if Data should be written to InfluxDB or not.')
+parser.add_argument('--interval', type=int, required=False, default=60, help='Query interval in "s".')
 args=parser.parse_args()
+
+# Time Rounding Function
+def ceil_time(ct, delta):
+    return ct + (datetime.min - ct) % delta
+
+now = datetime.now()
+new_time = ceil_time(now, timedelta(seconds=int(args.interval)))
+print(now, "Actual Time:", now, "waiting for:", new_time)    
+
+# Wait for Full Minute / Half Minute
+while now < new_time:
+    time.sleep(0.5)
+    now = datetime.now()
 
 mystring = b""
 crc16_x25_table = [
@@ -94,6 +108,7 @@ def twos_comp(val, bits):
 
 def watchdogtimer_ovf():
     global mystring
+    global readLoop
     message = mystring[0:-2]
     crc_calc = crc16_x25(message)
     crc_rx = int(str(hex(mystring[-1]))[2:]+str(hex(mystring[-2]))[2:] ,16)
@@ -146,7 +161,7 @@ def watchdogtimer_ovf():
                     client.close()
                 else:
                     print(datetime.now(), "InfluxDB write skipped, no valid data found:", measurement_list)
-                os._exit(0)
+            readLoop = False
             watchdog.stop()
             mystring=b""
         else:
@@ -157,25 +172,32 @@ def watchdogtimer_ovf():
         watchdog.stop()
 
 try:
-    my_tty = serial.Serial(port=args.device, baudrate = 9600, parity =serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0)
-    sys.stdout.write(my_tty.portstr + " opened\n\n")
-    my_tty.close()
-    my_tty.open()
- 
-except Exception as e:
-    sys.stdout.write("seriel port could not be opened:\n" + str(e) + "\n\n")
-    exit()
-
-try:
-    my_tty.reset_input_buffer()
-    my_tty.reset_output_buffer()
-    watchdog = Watchdog_timer(0.1, watchdogtimer_ovf)
-    watchdog.stop()
+    print(datetime.now(), "Query Electric Meter Values started with interval {}...".format(args.interval))
     while True:
-        while my_tty.in_waiting > 0:
-            mystring += my_tty.read()
-            watchdog.reset()
+        try:
+            my_tty = serial.Serial(port=args.device, baudrate = 9600, parity =serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS, timeout=0)
+            my_tty.close()
+            my_tty.open()
+        except Exception as e:
+            sys.stdout.write("seriel port could not be opened:\n" + str(e) + "\n\n")
+            time.sleep(1)
+            exit()
+        try:
+            my_tty.reset_input_buffer()
+            my_tty.reset_output_buffer()
+            watchdog = Watchdog_timer(0.1, watchdogtimer_ovf)
+            watchdog.stop()
+            readLoop = True
+            while readLoop:
+                while my_tty.in_waiting > 0:
+                    mystring += my_tty.read()
+                    watchdog.reset()
+        except KeyboardInterrupt:
+            my_tty.close()
+            sys.stdout.write("\nscript manually exited!\n")
 
+        time.sleep(args.interval - ((time.time() - new_time.timestamp()) % args.interval))
 except KeyboardInterrupt:
-    my_tty.close()
-    sys.stdout.write("\nscript manually exited!\n")
+    print("Script aborted...")
+finally:
+    print("Script exited...")

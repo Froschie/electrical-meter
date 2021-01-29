@@ -29,6 +29,9 @@ services:
       - influx_pw=<pw2>
       - influx_db=<db>
       - interval=300
+      - write=0
+      - device=/dev/ttyUSB0
+      - TZ=Europe/Berlin
     devices:
       - /dev/ttyUSB0
     restart: unless-stopped
