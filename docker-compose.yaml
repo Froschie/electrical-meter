@@ -32,6 +32,7 @@ services:
       - write=0
       - device=/dev/ttyUSB0
       - TZ=Europe/Berlin
+      - maxruntime=86400
     devices:
       - /dev/ttyUSB0
     restart: unless-stopped

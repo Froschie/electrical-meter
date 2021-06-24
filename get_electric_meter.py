@@ -20,12 +20,14 @@ parser.add_argument('--influx_pw', type=str, required=True, default="", help='Pa
 parser.add_argument('--influx_db', type=str, required=True, default="", help='DB name of the Influx DB Server.')
 parser.add_argument('--write', type=int, required=False, default=1, choices=[0, 1], help='Specify if Data should be written to InfluxDB or not.')
 parser.add_argument('--interval', type=int, required=False, default=60, help='Query interval in "s".')
+parser.add_argument('--maxruntime', type=int, required=False, default=86400, help='Max script runtime in "s".')
 args=parser.parse_args()
 
 # Time Rounding Function
 def ceil_time(ct, delta):
     return ct + (datetime.min - ct) % delta
 
+starttime = datetime.now()
 now = datetime.now()
 new_time = ceil_time(now, timedelta(seconds=int(args.interval)))
 print(now, "Actual Time:", now, "waiting for:", new_time)    
@@ -196,6 +198,9 @@ try:
             my_tty.close()
             sys.stdout.write("\nscript manually exited!\n")
 
+        runtime = datetime.now() - starttime
+        if runtime.total_seconds() > args.maxruntime:
+            sys.exit(0)
         time.sleep(args.interval - ((time.time() - new_time.timestamp()) % args.interval))
 except KeyboardInterrupt:
     print("Script aborted...")
