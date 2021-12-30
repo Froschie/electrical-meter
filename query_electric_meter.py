@@ -59,7 +59,8 @@ try:
                 break
 except Exception as e:
     log.error("obis_code_list.json file could not be opened or is not valid JSON file!")
-    log.error(e)    
+    log.error(e)
+    time.sleep(60)
     sys.exit(1)
 
 # Load OBIS Unit List
@@ -71,7 +72,8 @@ try:
                 break
 except Exception as e:
     log.error("obis_unit_list.json file could not be opened or is not valid JSON file!")
-    log.error(e)    
+    log.error(e)
+    time.sleep(60)
     sys.exit(1)
 
 # Load Influx Definiton for Tags and Fields
@@ -83,7 +85,8 @@ try:
                 break
 except Exception as e:
     log.error("influx_fields.json file could not be opened or is not valid JSON file!")
-    log.error(e)    
+    log.error(e)
+    time.sleep(60)
     sys.exit(1)
 
 def obis_code(value, format):
