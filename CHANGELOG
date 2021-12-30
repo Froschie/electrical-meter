@@ -1,0 +1,3 @@
+v4.0 - 30.12.2021
+- complete rewrite using smllib python library
+- added configuration files for flexible OBIS code usage

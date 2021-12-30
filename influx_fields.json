@@ -1,0 +1,10 @@
+{
+    "tags": {
+        "96.50.1": "device",
+        "96.1.0": "serial"
+    },
+    "fields": {
+        "1.8.0": "consumption",
+        "2.8.0": "supply"
+    }
+}

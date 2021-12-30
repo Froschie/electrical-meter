@@ -33,6 +33,9 @@ services:
       - device=/dev/ttyUSB0
       - TZ=Europe/Berlin
       - maxruntime=86400
+      - log=INFO
+      - obis=SHORT
+      - unit=INT
     devices:
       - /dev/ttyUSB0
     restart: unless-stopped
