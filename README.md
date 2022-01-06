@@ -54,6 +54,34 @@ curl -O https://raw.githubusercontent.com/Froschie/electrical-meter/master/docke
 vi docker-compose.yaml
 docker-compose up -d
 ```
+
+Example Docker Compose file:
+```yaml
+  electric-meter-query:
+    image: electric-meter
+    container_name: electric-meter-query
+    environment:
+      - influx_ip=192.168.1.3
+      - influx_port=8086
+      - influx_user=<user>
+      - influx_pw=<pw2>
+      - influx_db=<db>
+      - interval=300
+      - write=0
+      - device=/dev/ttyUSB0
+      - TZ=Europe/Berlin
+      - log=INFO
+      - obis=SHORT
+      - unit=INT
+    devices:
+      - /dev/ttyUSB0
+    logging: 
+      options:
+        max-size: "5M"
+        max-file: "10"
+    restart: unless-stopped
+```
+
 *Note: please adapt the parameters as needed!*
 
 
@@ -141,4 +169,26 @@ This file defines the units of the OBIS values, `obis_unit_list.json`:
     "30": "Wh",
     "27": "W"
 }
+```
+
+To use a customized configuration file,  start Container with mapping the file to root folder:
+```bash
+docker run -it --name temp --rm \
+ --device /dev/ttyUSB0 \
+ -e device="/dev/ttyUSB0" \
+ -e TZ=Europe/Berlin \
+ -e write="0" \
+ -e interval=1 \
+ -e influx_ip="" \
+ -v $(pwd)/obis_code_list.json:/obis_code_list.json \
+ froschie/sml-electrical-meter
+```
+
+Or via Docker Compose file:
+```yaml
+  electric-meter-query:
+  ...
+    volumes:
+      - /directory/obis_code_list.json:/obis_code_list.json
+  ...
 ```

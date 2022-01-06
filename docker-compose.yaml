@@ -32,10 +32,13 @@ services:
       - write=0
       - device=/dev/ttyUSB0
       - TZ=Europe/Berlin
-      - maxruntime=86400
       - log=INFO
       - obis=SHORT
       - unit=INT
     devices:
       - /dev/ttyUSB0
+    logging: 
+      options:
+        max-size: "5M"
+        max-file: "10"
     restart: unless-stopped
