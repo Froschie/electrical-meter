@@ -13,7 +13,7 @@ jobs:
         id: prepare
         run: |
           DOCKER_IMAGE=froschie/sml-electrical-meter
-          VERSION=4.0
+          VERSION=4.01
           PLATFORMS=linux/arm/v7,linux/amd64,linux/arm64
           echo ::set-output name=build_date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           echo ::set-output name=version::${VERSION}

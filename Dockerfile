@@ -3,7 +3,7 @@ FROM alpine:3.12
 RUN apk add --no-cache bash tzdata
 
 # Image Description
-LABEL version="4.0" description="Script to read Electric Meter via SML."
+LABEL version="4.01" description="Script to read Electric Meter via SML."
 
 # Install Python and Python Modules
 RUN apk add --no-cache python3 py-pip && pip install influxdb pyserial smllib && apk del py-pip && apk add py3-requests py3-msgpack

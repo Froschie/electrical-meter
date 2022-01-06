@@ -164,23 +164,26 @@ try:
                     text += obis_code(item.obis, args.obis) + ": " + value + obis_unit(item.unit) + " "
                 log.info(text)
                 if args.influx_ip and args.influx_port and args.influx_user and args.influx_pw and args.influx_db:
-                    log.debug(temp_body)
-                    json_body = [temp_body]
-                    if args.write == 1:
-                        influx_result = client.write_points(json_body)
-                        if influx_result:
-                            log.debug("InfluxDB write data successfull:" + str(json_body))
-                        else:
-                            log.error("InfluxDB write data FAILED:" + str(json_body))
-                            log.error(influx_result)
-                    #client.close()
+                    try:
+                        log.debug(temp_body)
+                        json_body = [temp_body]
+                        if args.write == 1:
+                            influx_result = client.write_points(json_body)
+                            if influx_result:
+                                log.debug("InfluxDB write data successfull:" + str(json_body))
+                            else:
+                                log.error("InfluxDB write data FAILED:" + str(json_body))
+                                log.error(influx_result)
+                        #client.close()
+                    except Exception as e:
+                        log.error("InfluxDB writing failed: {}".format(e))
                 time.sleep(args.interval - ((time.time() - new_time.timestamp()) % args.interval))
                 data = ''
         except KeyboardInterrupt:
             log.warning("Script aborted...")
             break
         except Exception as e:
-            log.error("Something went wrong: {}".format(e))
+            log.debug("Something went wrong: {}".format(e))
             continue
 except KeyboardInterrupt:
     log.warning("Script aborted...")

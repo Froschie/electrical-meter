@@ -1,3 +1,6 @@
+v4.01 - 06.01.2021
+- change Exception logging to debug and add seperate InfluxDB exception handling
+
 v4.0 - 30.12.2021
 - complete rewrite using smllib python library
 - added configuration files for flexible OBIS code usage
