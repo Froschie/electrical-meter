@@ -1,3 +1,6 @@
+v4.1 - 26.01.2021
+- open USB port only when reading data
+
 v4.01 - 06.01.2021
 - change Exception logging to debug and add seperate InfluxDB exception handling
 

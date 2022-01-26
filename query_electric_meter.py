@@ -177,7 +177,9 @@ try:
                         #client.close()
                     except Exception as e:
                         log.error("InfluxDB writing failed: {}".format(e))
+                my_tty.close()
                 time.sleep(args.interval - ((time.time() - new_time.timestamp()) % args.interval))
+                my_tty.open()
                 data = ''
         except KeyboardInterrupt:
             log.warning("Script aborted...")
